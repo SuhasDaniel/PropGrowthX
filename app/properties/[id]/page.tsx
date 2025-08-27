@@ -35,7 +35,8 @@ import ImageGallery from "@/components/image-gallery"
 import SimpleImageUploader from "@/components/simple-image-uploader"
 import { usePropertyImages } from "@/hooks/use-property-images"
 
-export default function PropertyDetailPage({ params }: { params: { id: string } }) {
+export default async function PropertyDetailPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params
   const [property, setProperty] = useState<Property | null>(null)
   const [loading, setLoading] = useState(true)
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
@@ -55,7 +56,7 @@ export default function PropertyDetailPage({ params }: { params: { id: string } 
     getPrimaryImageUrl,
     loading: imagesLoading,
     loadImages,
-  } = usePropertyImages(params.id)
+  } = usePropertyImages(id)
 
   // Load property and comparison list
   useEffect(() => {
@@ -63,7 +64,7 @@ export default function PropertyDetailPage({ params }: { params: { id: string } 
       setLoading(true)
       try {
         const properties = await fetchNYCProperties()
-        const foundProperty = properties.find((p) => p.id === params.id)
+        const foundProperty = properties.find((p) => p.id === id)
 
         if (foundProperty) {
           setProperty(foundProperty)
@@ -101,7 +102,7 @@ export default function PropertyDetailPage({ params }: { params: { id: string } 
     }
 
     loadProperty()
-  }, [params.id])
+  }, [id])
 
   // Update display images when Supabase images are loaded
   useEffect(() => {
@@ -314,7 +315,7 @@ export default function PropertyDetailPage({ params }: { params: { id: string } 
       {/* Image Upload Section */}
       {showImageUploader && (
         <div className="mb-8">
-          <SimpleImageUploader propertyId={params.id} onImagesUpdated={loadImages} />
+          <SimpleImageUploader propertyId={id} onImagesUpdated={loadImages} />
         </div>
       )}
 
