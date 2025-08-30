@@ -24,6 +24,11 @@ export default function LandingPage() {
             <Button asChild size="sm">
               <Link href="/government">Government Solutions</Link>
             </Button>
+            <Button asChild variant="secondary" size="sm">
+              <a href="https://tally.so/r/mJQkWd?transparentBackground=1" target="_blank" rel="noopener noreferrer">
+                Join Waiting List
+              </a>
+            </Button>
           </div>
         </div>
       </header>
