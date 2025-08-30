@@ -1,4 +1,4 @@
-import { GovernmentDashboard } from "@/components/government-dashboard"
+import GovernmentDashboard from "@/components/government-dashboard"
 
 export default function GovernmentDashboardPage() {
   return <GovernmentDashboard />
