@@ -5,7 +5,7 @@ import { useState } from "react"
 import {
   Bed,
   Bath,
-  Square,
+  SquareIcon as SquareFoot,
   TrendingUp,
   ArrowUp,
   ArrowDown,
@@ -20,7 +20,45 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 import ImageGallery from "@/components/image-gallery"
-import type { Property } from "@/data/nyc-properties"
+
+interface PropertyFeatures {
+  hasParking?: boolean
+  hasGarden?: boolean
+  hasPool?: boolean
+  hasBalcony?: boolean
+  hasElevator?: boolean
+  hasGym?: boolean
+  hasDoorman?: boolean
+  isRenovated?: boolean
+  hasWaterView?: boolean
+  hasCentralAir?: boolean
+}
+
+interface Property {
+  id: string
+  title: string
+  address: string
+  currentPrice: number
+  predictedPrice: number
+  priceChange: number
+  priceChangePercent: number
+  bedrooms: number
+  bathrooms: number
+  sqft: number
+  type: string
+  yearBuilt: number
+  roi: number
+  latitude: number
+  longitude: number
+  images?: string[]
+  allImages?: {
+    exterior?: string[]
+    interior?: string[]
+    bedroom?: string[]
+    bathroom?: string[]
+  }
+  features?: PropertyFeatures
+}
 
 interface PropertyCardProps {
   property: Property
@@ -254,7 +292,7 @@ export default function PropertyCard({
                 <span>{property.bathrooms}</span>
               </div>
               <div className="flex items-center gap-1">
-                <Square className="w-4 h-4 text-muted-foreground" />
+                <SquareFoot className="w-4 h-4 text-muted-foreground" />
                 <span>{property.sqft.toLocaleString()} sqft</span>
               </div>
             </div>

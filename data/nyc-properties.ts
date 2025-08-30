@@ -1,48 +1,11 @@
 // This is a sophisticated version of the data fetching function
 // that generates unique images for each property based on its characteristics
 
-export type Property = {
-  id: string
-  title: string
-  address: string
-  currentPrice: number
-  predictedPrice: number
-  priceChange: number
-  priceChangePercent: number
-  bedrooms: number
-  bathrooms: number
-  sqft: number
-  type: string
-  yearBuilt: number
-  roi: number
-  latitude: number
-  longitude: number
-  images?: string[]
-  allImages?: {
-    exterior: string[]
-    interior: string[]
-    bedroom: string[]
-    bathroom: string[]
-  }
-  features?: {
-    hasParking: boolean
-    hasGarden: boolean
-    hasPool: boolean
-    hasBalcony: boolean
-    hasElevator: boolean
-    hasGym: boolean
-    hasDoorman: boolean
-    isRenovated: boolean
-    hasWaterView: boolean
-    hasCentralAir: boolean
-  }
-}
-
-export async function fetchNYCProperties(): Promise<Property[]> {
+export async function fetchNYCProperties() {
   // Simulate API call delay
   await new Promise((resolve) => setTimeout(resolve, 1000))
 
-  const properties: Property[] = []
+  const properties = []
 
   // NYC neighborhoods
   const neighborhoods = [
@@ -86,13 +49,37 @@ export async function fetchNYCProperties(): Promise<Property[]> {
     "Eastern Parkway",
   ]
 
+  // Predefined exterior images for first 20 properties
+  const exteriorImages = [
+    "/images/property-1-exterior.png",
+    "/images/property-2-exterior.png",
+    "/images/property-3-exterior.png",
+    "/images/property-4-exterior.png",
+    "/images/property-5-exterior.png",
+    "/images/property-6-exterior.png",
+    "/images/property-7-exterior.png",
+    "/images/property-8-exterior.png",
+    "/images/property-9-exterior.png",
+    "/images/property-10-exterior.png",
+    "/images/property-11-exterior.png",
+    "/images/property-12-exterior.png",
+    "/images/property-13-exterior.png",
+    "/images/property-14-exterior.png",
+    "/images/property-15-exterior.png",
+    "/images/property-16-exterior.png",
+    "/images/property-17-exterior.png",
+    "/images/property-18-exterior.png",
+    "/images/property-19-exterior.png",
+    "/images/property-20-exterior.png",
+  ]
+
   // Generate a unique seed for each property to ensure consistent but varied images
-  const generateSeed = (propertyId: string, suffix = "") => {
+  const generateSeed = (propertyId, suffix = "") => {
     return `${propertyId}${suffix}`
   }
 
   // Generate a unique image URL based on property characteristics
-  const generateImageUrl = (property: Property, viewType: "exterior" | "interior" | "bedroom" | "bathroom", index: number) => {
+  const generateImageUrl = (property, viewType, index) => {
     const { id, type, bedrooms, bathrooms, yearBuilt, currentPrice, address } = property
 
     // Create a unique seed for this specific image
@@ -162,7 +149,7 @@ export async function fetchNYCProperties(): Promise<Property[]> {
   }
 
   // Hash function to generate consistent but varied indices
-  const hashCode = (str: string) => {
+  const hashCode = (str) => {
     let hash = 0
     for (let i = 0; i < str.length; i++) {
       const char = str.charCodeAt(i)
@@ -222,7 +209,7 @@ export async function fetchNYCProperties(): Promise<Property[]> {
     const yearBuilt = Math.floor(Math.random() * 120) + 1900
 
     // Create property object first so we can pass it to generateImageUrl
-    const property: Property = {
+    const property = {
       id: `prop${i}`,
       title,
       address,
@@ -241,19 +228,32 @@ export async function fetchNYCProperties(): Promise<Property[]> {
     }
 
     // Generate unique images for this property
-    const exteriorImages = [
-      generateImageUrl(property, "exterior", 1),
-      generateImageUrl(property, "exterior", 2),
-      generateImageUrl(property, "exterior", 3),
-    ]
+    let propertyExteriorImages = []
+    let interiorImages = []
+    let bedroomImages = []
 
-    const interiorImages = [
+    // For the first 20 properties, use the predefined exterior images
+    if (i <= 20) {
+      propertyExteriorImages = [
+        exteriorImages[i - 1], // Use the specific exterior image for this property
+        generateImageUrl(property, "exterior", 2),
+        generateImageUrl(property, "exterior", 3),
+      ]
+    } else {
+      propertyExteriorImages = [
+        generateImageUrl(property, "exterior", 1),
+        generateImageUrl(property, "exterior", 2),
+        generateImageUrl(property, "exterior", 3),
+      ]
+    }
+
+    interiorImages = [
       generateImageUrl(property, "interior", 1),
       generateImageUrl(property, "interior", 2),
       generateImageUrl(property, "interior", 3),
     ]
 
-    const bedroomImages = [
+    bedroomImages = [
       generateImageUrl(property, "bedroom", 1),
       generateImageUrl(property, "bedroom", 2),
       generateImageUrl(property, "bedroom", 3),
@@ -283,17 +283,21 @@ export async function fetchNYCProperties(): Promise<Property[]> {
     // Select primary images (one from each category)
     let primaryImages = []
 
-    // For the first 10 properties, include the bathroom image as the primary image
-    if (i <= 10) {
-      primaryImages = [exteriorImages[0], interiorImages[0], bedroomImages[0], bathroomImages[0]]
+    // For the first 20 properties, use the specific exterior image as primary
+    if (i <= 20) {
+      if (i <= 10) {
+        primaryImages = [exteriorImages[i - 1], interiorImages[0], bedroomImages[0], bathroomImages[0]]
+      } else {
+        primaryImages = [exteriorImages[i - 1], interiorImages[0], bedroomImages[0]]
+      }
     } else {
-      primaryImages = [exteriorImages[0], interiorImages[0], bedroomImages[0]]
+      primaryImages = [propertyExteriorImages[0], interiorImages[0], bedroomImages[0]]
     }
 
     // Add all images to the property
     property.images = primaryImages
     property.allImages = {
-      exterior: exteriorImages,
+      exterior: propertyExteriorImages,
       interior: interiorImages,
       bedroom: bedroomImages,
       bathroom: bathroomImages,

@@ -5,12 +5,30 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { cn } from "@/lib/utils"
 import { ArrowUp, ArrowDown } from "lucide-react"
-import type { Property } from "@/data/nyc-properties"
+
+interface Property {
+  id: string
+  title: string
+  address: string
+  currentPrice: number
+  predictedPrice: number
+  priceChange: number
+  priceChangePercent: number
+  bedrooms: number
+  bathrooms: number
+  sqft: number
+  type: string
+  yearBuilt: number
+  roi: number
+  latitude: number
+  longitude: number
+  image: string
+}
 
 interface PropertyMapProps {
   properties: Property[]
   className?: string
-  onPropertySelect: (property: Property | null) => void
+  onPropertySelect: (property: Property) => void
   selectedProperty: Property | null
 }
 
@@ -343,7 +361,7 @@ export default function PropertyMap({ properties, className, onPropertySelect, s
             <div className="flex items-start gap-4">
               <div className="w-16 h-16 rounded-md bg-muted flex-shrink-0 overflow-hidden">
                 <img
-                  src={selectedProperty.images?.[0] || "/placeholder.svg?height=64&width=64"}
+                  src={selectedProperty.image || "/placeholder.svg?height=64&width=64"}
                   alt={selectedProperty.title}
                   className="w-full h-full object-cover"
                 />

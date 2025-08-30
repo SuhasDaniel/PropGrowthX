@@ -9,7 +9,7 @@ export const metadata: Metadata = {
   title: "PropGrowthX - NYC Investment Properties",
   description:
     "Discover high-growth investment opportunities in NYC real estate with AI-powered market predictions and comprehensive property analysis.",
-    generator: 'v0.dev'
+    generator: 'v0.app'
 }
 
 // This IS your HTML structure - it replaces traditional <html>, <head>, <body>

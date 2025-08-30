@@ -8,14 +8,13 @@ import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Badge } from "@/components/ui/badge"
 import { fetchNYCProperties } from "@/data/nyc-properties"
-import type { Property } from "@/data/nyc-properties"
 import PropertyMap from "@/components/property-map"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import ImageFilter from "@/components/image-filter"
 
 export default function PropertiesPage() {
-  const [properties, setProperties] = useState<Property[]>([])
-  const [filteredProperties, setFilteredProperties] = useState<Property[]>([])
+  const [properties, setProperties] = useState([])
+  const [filteredProperties, setFilteredProperties] = useState([])
   const [loading, setLoading] = useState(true)
   const [searchQuery, setSearchQuery] = useState("")
   const [priceFilter, setPriceFilter] = useState("any")
@@ -24,10 +23,10 @@ export default function PropertiesPage() {
   const [page, setPage] = useState(1)
   const propertiesPerPage = 12
   const [viewMode, setViewMode] = useState("list")
-  const [selectedProperty, setSelectedProperty] = useState<Property | null>(null)
-  const [favorites, setFavorites] = useState<string[]>([])
-  const [imageFilters, setImageFilters] = useState<string[]>([])
-  const [featureFilters, setFeatureFilters] = useState<string[]>([])
+  const [selectedProperty, setSelectedProperty] = useState(null)
+  const [favorites, setFavorites] = useState([])
+  const [imageFilters, setImageFilters] = useState([])
+  const [featureFilters, setFeatureFilters] = useState([])
 
   useEffect(() => {
     const loadProperties = async () => {
@@ -59,7 +58,7 @@ export default function PropertiesPage() {
   }, [])
 
   // Toggle favorite status for a property
-  const toggleFavorite = useCallback((propertyId: string) => {
+  const toggleFavorite = useCallback((propertyId) => {
     setFavorites((current) => {
       let newFavorites
       if (current.includes(propertyId)) {
@@ -81,19 +80,19 @@ export default function PropertiesPage() {
 
   // Check if a property is favorited
   const isFavorite = useCallback(
-    (propertyId: string) => {
+    (propertyId) => {
       return favorites.includes(propertyId)
     },
     [favorites],
   )
 
   // Handle property selection on map
-  const handlePropertySelect = (property: Property) => {
+  const handlePropertySelect = (property) => {
     setSelectedProperty(property)
   }
 
   // Helper function to check if a property matches image filters
-  const matchesImageFilters = (property: Property) => {
+  const matchesImageFilters = (property) => {
     if (imageFilters.length === 0) return true
 
     // Check if property has images
@@ -101,22 +100,23 @@ export default function PropertiesPage() {
 
     // Simple keyword matching for demonstration
     // In a real app, you might use image recognition or metadata
-    const imageUrls = (property.images || []).join(" ").toLowerCase()
+    const imageUrls = property.images.join(" ").toLowerCase()
 
     return imageFilters.some((filter) => {
       switch (filter) {
         case "exterior":
           return (
-            (property.images?.[0] && property.images[0].includes("exterior")) ||
+            (property.images[0] && property.images[0].includes("exterior")) ||
             property.type === "Single Family" ||
+            property.type === "Townhouse" ||
             property.type === "Multi-Family" ||
             property.type === "Condo" ||
             property.type === "Co-op"
           )
         case "interior":
-          return (property.images?.some((img) => img.includes("living") || img.includes("interior"))) ?? false
+          return property.images.some((img) => img.includes("living") || img.includes("interior"))
         case "bedroom":
-          return (property.images?.some((img) => img.includes("bedroom"))) ?? false
+          return property.images.some((img) => img.includes("bedroom"))
         case "modern":
           return imageUrls.includes("modern") || imageUrls.includes("contemporary") || property.yearBuilt > 2000
         case "traditional":
@@ -138,32 +138,32 @@ export default function PropertiesPage() {
   }
 
   // Helper function to check if a property matches feature filters
-  const matchesFeatureFilters = (property: Property) => {
+  const matchesFeatureFilters = (property) => {
     if (featureFilters.length === 0) return true
     if (!property.features) return false
 
     return featureFilters.every((filter) => {
       switch (filter) {
         case "hasParking":
-          return !!property.features?.hasParking
+          return property.features.hasParking
         case "hasGarden":
-          return !!property.features?.hasGarden
+          return property.features.hasGarden
         case "hasPool":
-          return !!property.features?.hasPool
+          return property.features.hasPool
         case "hasBalcony":
-          return !!property.features?.hasBalcony
+          return property.features.hasBalcony
         case "hasElevator":
-          return !!property.features?.hasElevator
+          return property.features.hasElevator
         case "hasGym":
-          return !!property.features?.hasGym
+          return property.features.hasGym
         case "hasDoorman":
-          return !!property.features?.hasDoorman
+          return property.features.hasDoorman
         case "isRenovated":
-          return !!property.features?.isRenovated
+          return property.features.isRenovated
         case "hasWaterView":
-          return !!property.features?.hasWaterView
+          return property.features.hasWaterView
         case "hasCentralAir":
-          return !!property.features?.hasCentralAir
+          return property.features.hasCentralAir
         default:
           return true
       }
@@ -459,7 +459,7 @@ export default function PropertiesPage() {
               <PropertyMap
                 properties={filteredProperties}
                 className="h-[600px] rounded-lg border bg-muted"
-                onPropertySelect={(p) => p && handlePropertySelect(p)}
+                onPropertySelect={handlePropertySelect}
                 selectedProperty={selectedProperty}
               />
             )}
